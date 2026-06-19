@@ -1,892 +1,791 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from "react";
 import {
-  Sun, Wind, Battery, ArrowRight, Menu, X, CheckCircle2,
-  Gauge, MapPin, Mail, Phone, TrendingUp, ClipboardCheck,
-  Wrench, Quote, Leaf
-} from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+  Building2,
+  Shield,
+  Network,
+  Sun,
+  Menu,
+  Phone,
+  Mail,
+  MapPin,
+  ArrowRight,
+  CheckCircle,
+} from "lucide-react";
 
-/* ---------- Design tokens ---------- */
-const C = {
-  slate: '#16243A',
-  ink: '#0E1826',
-  amber: '#F2A93B',
-  amberDeep: '#D88B1F',
-  teal: '#3FA9A4',
-  tealDeep: '#2C8782',
-  mist: '#EDEFE9',
-  cloud: '#FAFAF7',
-  graphite: '#23262B',
-  graphiteSoft: '#5B6470',
-  hair: 'rgba(237,239,233,0.14)',
-  hairDark: 'rgba(22,36,58,0.12)',
-};
-
-const FONT_DISPLAY = "'Space Grotesk', sans-serif";
-const FONT_BODY = "'Inter', sans-serif";
-const FONT_MONO = "'IBM Plex Mono', monospace";
-
-/* ---------- Static content ---------- */
-const NAV_LINKS = [
-  { id: 'solutions', label: 'Solutions' },
-  { id: 'estimator', label: 'Estimator' },
-  { id: 'process', label: 'How it works' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'contact', label: 'Contact' },
-];
-
-const STATS = [
-  { value: 42, suffix: ' MW', label: 'Installed capacity' },
-  { value: 186, suffix: '', label: 'Commercial sites live' },
-  { value: 61400, suffix: ' t', label: 'CO2 offset per year' },
-  { value: 14, suffix: '', label: 'States served' },
-];
-
-const SOLUTIONS = [
-  {
-    icon: Sun,
-    title: 'Commercial solar',
-    body: 'Rooftop and ground-mount arrays sized to your load profile and roof geometry, not a generic per-square-foot estimate.',
-  },
-  {
-    icon: Wind,
-    title: 'Wind microgrids',
-    body: 'Small-scale turbines for sites with steady wind exposure — coastal yards, ridgelines, and open flatland warehouses.',
-  },
-  {
-    icon: Battery,
-    title: 'Hybrid storage & control',
-    body: 'Battery buffering and a control layer that blends solar, wind, and grid power automatically as conditions shift.',
-  },
-];
-
-const PROCESS = [
-  {
-    icon: ClipboardCheck,
-    title: 'Site assessment',
-    body: 'We model your roof, land, load curve, and local wind data before proposing a single panel or pole.',
-  },
-  {
-    icon: Gauge,
-    title: 'System design',
-    body: 'Engineers size the solar array, turbines, and storage together as one system, not three separate quotes.',
-  },
-  {
-    icon: Wrench,
-    title: 'Permitting & install',
-    body: 'We handle utility interconnection and permitting, then install with our own certified crews.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Monitoring & tuning',
-    body: 'Live telemetry tracks output against the model, and we tune the system as your load or weather patterns change.',
-  },
-];
-
-const PROJECTS = [
-  {
-    name: 'Loom Logistics Distribution Center',
-    location: 'Spartanburg, SC',
-    detail: '80 kW solar + 2 turbines',
-    result: 'Cut grid draw 64% in year one',
-  },
-  {
-    name: 'Bridgeport Cold Storage',
-    location: 'Bridgeport, CT',
-    detail: '50 kW solar + battery',
-    result: 'Avoided 2 demand-charge tiers',
-  },
-  {
-    name: 'Harrow Mills Textile Plant',
-    location: 'Greenville, SC',
-    detail: '24 kW solar + 1 turbine',
-    result: 'Paid back in 5.4 years',
-  },
-];
-
-const WIND_OPTIONS = [
-  { id: 'low', label: 'Low', mult: 0.06 },
-  { id: 'medium', label: 'Medium', mult: 0.12 },
-  { id: 'high', label: 'High', mult: 0.2 },
-];
-
-/* ---------- Helpers ---------- */
-function formatNumber(n) {
-  return Math.round(n).toLocaleString('en-US');
-}
-
-function useCountUp(target, duration = 1300) {
-  const [value, setValue] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setStarted(true);
-        });
-      },
-      { threshold: 0.4 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return undefined;
-    let startTime = null;
-    let frame;
-    const step = (timestamp) => {
-      if (startTime === null) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(target * eased);
-      if (progress < 1) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [started, target, duration]);
-
-  return [value, ref];
-}
-
-/* ---------- Small subcomponents ---------- */
-function Mark({ size = 28 }) {
+export default function App() {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M10 28 L16 4 L22 28" stroke="#D64545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M11.5 22 H20.5" stroke="#D64545" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M13 16 H19" stroke="#D64545" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M14.5 10 H17.5" stroke="#D64545" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M7 28 H25" stroke="#D64545" strokeWidth="2" strokeLinecap="round" />
-      <path d="M16 4 V1" stroke="#D64545" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M19.5 3.5 A4.2 4.2 0 0 1 19.5 9.5" stroke="#D64545" strokeWidth="1.2" strokeOpacity="0.5" strokeLinecap="round" />
-      <path d="M22 1.5 A7.3 7.3 0 0 1 22 11.5" stroke="#D64545" strokeWidth="1.2" strokeOpacity="0.3" strokeLinecap="round" />
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill={C.amber} />
-    </svg>
-  );
-}
-
-function StatBlock({ stat }) {
-  const [value, ref] = useCountUp(stat.value);
-  return (
-    <div ref={ref} className="flex flex-col gap-1 py-2">
-      <span style={{ fontFamily: FONT_MONO, color: C.cloud, fontSize: '2rem', fontWeight: 600 }}>
-        {formatNumber(value)}{stat.suffix}
-      </span>
-      <span style={{ fontFamily: FONT_BODY, color: 'rgba(250,250,247,0.6)', fontSize: '0.85rem' }}>
-        {stat.label}
-      </span>
-    </div>
-  );
-}
-
-function HeroScene() {
-  return (
-    <svg
-      viewBox="0 0 640 440"
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0 w-full h-full"
-      aria-hidden="true"
-    >
-      <defs>
-        <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={C.amber} stopOpacity="0.55" />
-          <stop offset="100%" stopColor={C.amber} stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={C.slate} stopOpacity="0" />
-          <stop offset="100%" stopColor={C.ink} stopOpacity="0.6" />
-        </linearGradient>
-      </defs>
-
-      <rect x="0" y="0" width="640" height="440" fill="url(#skyFade)" />
-
-      <circle cx="470" cy="120" r="110" fill="url(#sunGlow)" className="solv-sun-pulse" />
-      <circle cx="470" cy="120" r="34" fill={C.amber} className="solv-sun-pulse" />
-
-      {[0, 1, 2, 3].map((i) => (
-        <path
-          key={i}
-          d={`M -40 ${260 + i * 38} C 120 ${220 + i * 38}, 260 ${300 + i * 38}, 420 ${250 + i * 38} S 640 ${230 + i * 38}, 700 ${260 + i * 38}`}
-          fill="none"
-          stroke={C.teal}
-          strokeOpacity={0.22 - i * 0.03}
-          strokeWidth="2"
-          strokeDasharray="10 16"
-          className={`solv-wind-line solv-wind-line-${i}`}
-        />
-      ))}
-
-      <line x1="0" y1="400" x2="640" y2="400" stroke={C.hair} strokeWidth="1" />
-
-      <g style={{ transformOrigin: '560px 330px' }} className="solv-turbine">
-        <line x1="560" y1="330" x2="560" y2="400" stroke="rgba(250,250,247,0.35)" strokeWidth="2" />
-        <circle cx="560" cy="330" r="3" fill="rgba(250,250,247,0.5)" />
-        {[0, 120, 240].map((deg) => (
-          <rect
-            key={deg}
-            x="558"
-            y="296"
-            width="4"
-            height="34"
-            rx="2"
-            fill="rgba(250,250,247,0.4)"
-            transform={`rotate(${deg} 560 330)`}
-          />
-        ))}
-      </g>
-    </svg>
-  );
-}
-
-/* ---------- Main page ---------- */
-export default function GnitLtdSite() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [systemSize, setSystemSize] = useState(120);
-  const [sunHours, setSunHours] = useState(5.2);
-  const [windExposure, setWindExposure] = useState('medium');
-  const [submitted, setSubmitted] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
-  const [pastHero, setPastHero] = useState(false);
-  const [inContact, setInContact] = useState(false);
-
-  useEffect(() => {
-    const targets = NAV_LINKS.map((l) => document.getElementById(l.id)).filter(Boolean);
-    if (targets.length === 0) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
-    );
-    targets.forEach((t) => observer.observe(t));
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const heroEnd = document.getElementById('hero-end');
-    if (!heroEnd) return undefined;
-    const observer = new IntersectionObserver(([entry]) => setPastHero(!entry.isIntersecting), { threshold: 0 });
-    observer.observe(heroEnd);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const contact = document.getElementById('contact');
-    if (!contact) return undefined;
-    const observer = new IntersectionObserver(([entry]) => setInContact(entry.isIntersecting), { threshold: 0.2 });
-    observer.observe(contact);
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollTo = (id) => {
-    setMobileOpen(false);
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const windMult = WIND_OPTIONS.find((w) => w.id === windExposure).mult;
-  const solarAnnualKWh = systemSize * sunHours * 365 * 0.78;
-  const windBonusKWh = solarAnnualKWh * windMult;
-  const totalAnnualKWh = solarAnnualKWh + windBonusKWh;
-  const annualSavings = totalAnnualKWh * 0.14;
-  const co2OffsetKg = totalAnnualKWh * 0.42;
-  const treesEquivalent = co2OffsetKg / 21;
-
-  const chartData = [
-    { name: 'Solar only', solar: solarAnnualKWh, wind: 0 },
-    { name: 'Solar + Wind', solar: solarAnnualKWh, wind: windBonusKWh },
-  ];
-
-  return (
-    <div style={{ fontFamily: FONT_BODY, backgroundColor: C.cloud, color: C.graphite }} className="w-full min-h-screen">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
-
-        @keyframes solv-sun-pulse {
-          0%, 100% { opacity: 0.92; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.035); }
-        }
-        @keyframes solv-spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes solv-wind-flow {
-          from { stroke-dashoffset: 0; }
-          to { stroke-dashoffset: -260; }
-        }
-        .solv-sun-pulse {
-          transform-origin: 470px 120px;
-          animation: solv-sun-pulse 5s ease-in-out infinite;
-        }
-        .solv-turbine {
-          animation: solv-spin 7s linear infinite;
-        }
-        .solv-wind-line {
-          animation: solv-wind-flow 7s linear infinite;
-        }
-        .solv-wind-line-1 { animation-duration: 9s; }
-        .solv-wind-line-2 { animation-duration: 11s; }
-        .solv-wind-line-3 { animation-duration: 13s; }
-
-        .solv-segment {
-          transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .solv-sun-pulse, .solv-turbine, .solv-wind-line {
-            animation: none !important;
-          }
-        }
-      `}</style>
-
-      {/* ---------- Nav ---------- */}
-      <header
-        className="sticky top-0 z-40 w-full"
-        style={{ backgroundColor: 'rgba(22,36,58,0.92)', backdropFilter: 'blur(6px)', borderBottom: `1px solid ${C.hair}` }}
-      >
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          <button
-            onClick={() => scrollTo('top')}
-            className="flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
-            style={{ color: C.cloud }}
-          >
-            <Mark size={40} />
-            <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: '1.6rem', letterSpacing: '0.01em' }}>
-              GNIT LTD
-            </span>
-          </button>
-
-          <nav className="hidden md:flex items-center gap-7">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                aria-current={activeSection === link.id ? 'page' : undefined}
-                className="text-sm font-medium pb-1 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
-                style={{
-                  color: activeSection === link.id ? C.amber : 'rgba(250,250,247,0.78)',
-                  borderBottom: activeSection === link.id ? `2px solid ${C.amber}` : '2px solid transparent',
-                }}
-              >
-                {link.label}
-              </button>
-            ))}
-            <button
-              onClick={() => scrollTo('contact')}
-              className="text-sm font-semibold px-4 py-2 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2"
-              style={{ backgroundColor: C.amber, color: C.ink }}
-            >
-              Request a proposal
-            </button>
-          </nav>
-
-          <button
-            className="md:hidden focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
-            style={{ color: C.cloud }}
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-
-        <div
-          className="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
-          style={{
-            maxHeight: mobileOpen ? '420px' : '0px',
-            borderTop: mobileOpen ? `1px solid ${C.hair}` : '1px solid transparent',
-          }}
-        >
-          <div className="px-5 pb-5 flex flex-col gap-4">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                className="text-left text-sm font-medium pt-3"
-                style={{ color: activeSection === link.id ? C.amber : 'rgba(250,250,247,0.85)' }}
-              >
-                {link.label}
-              </button>
-            ))}
-            <button
-              onClick={() => scrollTo('contact')}
-              className="text-sm font-semibold px-4 py-2.5 rounded-full text-center"
-              style={{ backgroundColor: C.amber, color: C.ink }}
-            >
-              Request a proposal
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main id="top">
-        {/* ---------- Hero ---------- */}
-        <section className="relative overflow-hidden" style={{ backgroundColor: C.slate }}>
-          <HeroScene />
-          <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-24 sm:pt-28 sm:pb-32">
-            <div className="max-w-xl">
-              <span
-                className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-6"
-                style={{ backgroundColor: 'rgba(63,169,164,0.16)', color: C.teal, fontFamily: FONT_MONO, letterSpacing: '0.04em' }}
-              >
-                COMMERCIAL &amp; INDUSTRIAL ENERGY
-              </span>
-              <h1
-                style={{ fontFamily: FONT_DISPLAY, color: C.cloud, fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight: 700, lineHeight: 1.08 }}
-              >
-                Solar and wind, run as one system.
-              </h1>
-              <p className="mt-6 text-base sm:text-lg" style={{ color: 'rgba(250,250,247,0.75)', lineHeight: 1.6 }}>
-                GNIT LTD designs, builds, and monitors hybrid renewable systems for commercial
-                sites — engineered to keep producing when the sun clouds over and the wind drops.
-              </p>
-              <div className="mt-9 flex flex-wrap items-center gap-4">
-                <button
-                  onClick={() => scrollTo('estimator')}
-                  className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2"
-                  style={{ backgroundColor: C.amber, color: C.ink }}
-                >
-                  Estimate your yield <ArrowRight size={16} />
-                </button>
-                <button
-                  onClick={() => scrollTo('process')}
-                  className="text-sm font-semibold px-5 py-3 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2"
-                  style={{ border: `1px solid ${C.hair}`, color: C.cloud }}
-                >
-                  See our process
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2" style={{ borderTop: `1px solid ${C.hair}`, paddingTop: '1.75rem' }}>
-              {STATS.map((stat) => (
-                <StatBlock key={stat.label} stat={stat} />
-              ))}
-            </div>
-            <div id="hero-end" />
-          </div>
-        </section>
-
-        {/* ---------- Solutions ---------- */}
-        <section id="solutions" className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
-          <div className="max-w-2xl">
-            <span style={{ fontFamily: FONT_MONO, color: C.tealDeep, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-              SOLUTIONS
-            </span>
-            <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: '2rem', fontWeight: 700, marginTop: '0.5rem' }}>
-              One system, two sources
-            </h2>
-            <p className="mt-4 text-base" style={{ color: C.graphiteSoft, lineHeight: 1.6 }}>
-              Most installers sell solar. We size solar and wind against the same load profile,
-              so your site keeps producing across more hours of the day and more days of the year.
+    <div className="min-h-screen bg-white text-slate-800">
+      {/* NAVBAR */}
+      <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">
+              GNIT <span className="text-green-600">LTD</span>
+            </h1>
+            <p className="text-xs text-slate-500">
+              Engineering Critical Infrastructure for Africa
             </p>
           </div>
 
-          <div className="mt-12 grid sm:grid-cols-3 gap-6">
-            {SOLUTIONS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.title}
-                  className="p-6 rounded-2xl flex flex-col gap-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-                  style={{ border: `1px solid ${C.hairDark}`, backgroundColor: C.mist }}
-                >
-                  <div
-                    className="w-11 h-11 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(242,169,59,0.16)' }}
-                  >
-                    <Icon size={20} color={C.amberDeep} />
-                  </div>
-                  <h3 style={{ fontFamily: FONT_DISPLAY, fontWeight: 600, fontSize: '1.1rem' }}>{item.title}</h3>
-                  <p style={{ color: C.graphiteSoft, fontSize: '0.92rem', lineHeight: 1.6 }}>{item.body}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+          <nav className="hidden lg:flex gap-8 text-sm font-medium">
+            <a href="#home" className="hover:text-green-600">
+              Home
+            </a>
+            <a href="#about" className="hover:text-green-600">
+              Company Profile
+            </a>
+            <a href="#business-units" className="hover:text-green-600">
+              Business Units
+            </a>
+            <a href="#services" className="hover:text-green-600">
+              Services
+            </a>
+            <a href="#contact" className="hover:text-green-600">
+              Contact
+            </a>
+          </nav>
 
-        {/* ---------- Estimator ---------- */}
-        <section id="estimator" style={{ backgroundColor: C.ink }} className="py-20 sm:py-28">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8">
-            <div className="max-w-2xl">
-              <span style={{ fontFamily: FONT_MONO, color: C.teal, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-                ESTIMATOR
+          <button className="lg:hidden">
+            <Menu size={24} />
+          </button>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section
+        id="home"
+        className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white"
+      >
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <div className="max-w-4xl">
+            <div className="inline-flex items-center gap-2 bg-green-700/20 border border-green-500 px-4 py-2 rounded-full text-sm mb-6">
+              <CheckCircle size={16} />
+              Established 2019 | RC 1551039
+            </div>
+
+            <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+              Engineering Critical
+              <span className="text-green-500 block">
+                Infrastructure for Africa
               </span>
-              <h2 style={{ fontFamily: FONT_DISPLAY, color: C.cloud, fontSize: '2rem', fontWeight: 700, marginTop: '0.5rem' }}>
-                See what your site could produce
+            </h1>
+
+            <p className="text-xl text-slate-300 mt-8 max-w-3xl">
+              GNIT LTD is a multidisciplinary Engineering, Procurement and
+              Construction (EPC) company delivering integrated Energy, ICT,
+              Security and Infrastructure solutions across Nigeria and Africa.
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-10">
+              <button className="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-lg font-semibold flex items-center gap-2">
+                Request Consultation
+                <ArrowRight size={18} />
+              </button>
+
+              <button className="border border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-slate-900 transition">
+                Explore Services
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CREDIBILITY BAR */}
+      <section className="bg-slate-100 border-y">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid md:grid-cols-4 gap-6 text-center">
+            <div>
+              <h3 className="font-bold text-xl">2019</h3>
+              <p className="text-slate-600">Established</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl">RC 1551039</h3>
+              <p className="text-slate-600">Registered Company</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl">Abuja</h3>
+              <p className="text-slate-600">Head Office</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl">Africa</h3>
+              <p className="text-slate-600">Growth Vision</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ABOUT GNIT */}
+      <section id="about" className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <span className="text-green-600 font-semibold uppercase tracking-wider">
+                Company Profile
+              </span>
+
+              <h2 className="text-4xl font-bold mt-4 mb-6">
+                Building Sustainable Infrastructure for a Connected Future
               </h2>
-              <p className="mt-4 text-base" style={{ color: 'rgba(250,250,247,0.65)', lineHeight: 1.6 }}>
-                Move the controls to match your site. These figures are illustrative — your
-                proposal will be modeled against your actual roof, load, and local wind data.
+
+              <p className="text-lg text-slate-600 mb-6">
+                GNIT LTD provides integrated engineering, energy, ICT and
+                security solutions that enable governments, institutions,
+                businesses and communities to operate efficiently, securely and
+                sustainably.
+              </p>
+
+              <p className="text-lg text-slate-600">
+                Our end-to-end approach covers consulting, engineering design,
+                procurement, implementation, commissioning and long-term
+                operational support.
               </p>
             </div>
 
-            <div className="mt-12 grid lg:grid-cols-2 gap-10">
-              {/* Controls */}
-              <div className="flex flex-col gap-8">
-                <div>
-                  <div className="flex items-baseline justify-between mb-2">
-                    <label htmlFor="systemSize" className="text-sm font-medium" style={{ color: C.cloud }}>
-                      System size
-                    </label>
-                    <span style={{ fontFamily: FONT_MONO, color: C.amber }}>{systemSize} kW</span>
-                  </div>
-                  <input
-                    id="systemSize"
-                    type="range"
-                    min="20"
-                    max="400"
-                    step="10"
-                    value={systemSize}
-                    onChange={(e) => setSystemSize(Number(e.target.value))}
-                    className="w-full"
-                    style={{ accentColor: C.amber }}
-                  />
-                </div>
+            <div className="bg-slate-50 rounded-2xl p-10 shadow-sm">
+              <h3 className="text-2xl font-bold mb-6">Core Values</h3>
 
-                <div>
-                  <div className="flex items-baseline justify-between mb-2">
-                    <label htmlFor="sunHours" className="text-sm font-medium" style={{ color: C.cloud }}>
-                      Average daily sun hours
-                    </label>
-                    <span style={{ fontFamily: FONT_MONO, color: C.amber }}>{sunHours.toFixed(1)} hrs</span>
-                  </div>
-                  <input
-                    id="sunHours"
-                    type="range"
-                    min="3"
-                    max="7"
-                    step="0.1"
-                    value={sunHours}
-                    onChange={(e) => setSunHours(Number(e.target.value))}
-                    className="w-full"
-                    style={{ accentColor: C.amber }}
-                  />
-                </div>
-
-                <div>
-                  <span className="text-sm font-medium block mb-2" style={{ color: C.cloud }}>
-                    Wind exposure
-                  </span>
-                  <div className="flex gap-2">
-                    {WIND_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => setWindExposure(opt.id)}
-                        className="solv-segment flex-1 text-sm font-medium py-2.5 rounded-lg focus-visible:ring-2 focus-visible:ring-offset-2"
-                        style={{
-                          backgroundColor: windExposure === opt.id ? C.teal : 'transparent',
-                          color: windExposure === opt.id ? C.ink : 'rgba(250,250,247,0.7)',
-                          border: `1px solid ${windExposure === opt.id ? C.teal : C.hair}`,
-                        }}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Output */}
-              <div
-                className="rounded-2xl p-7 sm:p-8 flex flex-col gap-6"
-                style={{ backgroundColor: C.slate, border: `1px solid ${C.hair}` }}
-              >
-                <div>
-                  <span className="text-xs" style={{ color: 'rgba(250,250,247,0.55)', fontFamily: FONT_MONO, letterSpacing: '0.04em' }}>
-                    ESTIMATED ANNUAL OUTPUT
-                  </span>
-                  <div className="mt-1 flex items-baseline gap-2">
-                    <span style={{ fontFamily: FONT_MONO, color: C.cloud, fontSize: '2.4rem', fontWeight: 600 }}>
-                      {formatNumber(totalAnnualKWh)}
-                    </span>
-                    <span style={{ color: 'rgba(250,250,247,0.6)' }}>kWh</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-2" style={{ borderTop: `1px solid ${C.hair}` }}>
-                  <div>
-                    <span className="text-xs" style={{ color: 'rgba(250,250,247,0.55)' }}>Annual savings</span>
-                    <div style={{ fontFamily: FONT_MONO, color: C.amber, fontSize: '1.3rem', fontWeight: 600 }}>
-                      ${formatNumber(annualSavings)}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-xs" style={{ color: 'rgba(250,250,247,0.55)' }}>CO2 offset</span>
-                    <div style={{ fontFamily: FONT_MONO, color: C.teal, fontSize: '1.3rem', fontWeight: 600 }}>
-                      {formatNumber(co2OffsetKg / 1000)} t/yr
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2" style={{ borderTop: `1px solid ${C.hair}` }}>
-                  <Leaf size={16} color={C.teal} />
-                  <span className="text-sm" style={{ color: 'rgba(250,250,247,0.7)' }}>
-                    Roughly equivalent to {formatNumber(treesEquivalent)} trees planted per year
-                  </span>
-                </div>
-
-                <div className="pt-2" style={{ borderTop: `1px solid ${C.hair}` }}>
-                  <span
-                    className="text-xs"
-                    style={{ color: 'rgba(250,250,247,0.55)', fontFamily: FONT_MONO, letterSpacing: '0.04em' }}
-                  >
-                    SOLAR ONLY VS. SOLAR + WIND
-                  </span>
-                  <div className="mt-3" style={{ height: 180 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                        <CartesianGrid stroke={C.hair} vertical={false} />
-                        <XAxis dataKey="name" tick={{ fill: 'rgba(250,250,247,0.6)', fontSize: 12 }} axisLine={false} tickLine={false} />
-                        <YAxis
-                          tick={{ fill: 'rgba(250,250,247,0.45)', fontSize: 11 }}
-                          axisLine={false}
-                          tickLine={false}
-                          tickFormatter={(v) => `${Math.round(v / 1000)}k`}
-                          width={36}
-                        />
-                        <Tooltip
-                          cursor={{ fill: 'rgba(250,250,247,0.06)' }}
-                          contentStyle={{ backgroundColor: C.ink, border: `1px solid ${C.hair}`, borderRadius: 8 }}
-                          labelStyle={{ color: C.cloud }}
-                          formatter={(value, key) => [`${formatNumber(value)} kWh`, key === 'solar' ? 'Solar' : 'Wind bonus']}
-                        />
-                        <Bar dataKey="solar" stackId="a" fill={C.amber} radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="wind" stackId="a" fill={C.teal} radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+              <div className="space-y-4">
+                <div>✓ Integrity</div>
+                <div>✓ Excellence</div>
+                <div>✓ Innovation</div>
+                <div>✓ Safety</div>
+                <div>✓ Sustainability</div>
+                <div>✓ Customer Focus</div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ---------- Process ---------- */}
-        <section id="process" className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
-          <div className="max-w-2xl">
-            <span style={{ fontFamily: FONT_MONO, color: C.tealDeep, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-              HOW IT WORKS
+      {/* BUSINESS UNITS */}
+      <section
+        id="business-units"
+        className="py-24 bg-slate-900 text-white"
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-500 font-semibold uppercase">
+              Strategic Business Units
             </span>
-            <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: '2rem', fontWeight: 700, marginTop: '0.5rem' }}>
-              How a GNIT LTD system gets built
+
+            <h2 className="text-4xl font-bold mt-4">
+              Integrated Infrastructure Expertise
             </h2>
           </div>
 
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PROCESS.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <div key={step.title} className="flex flex-col gap-3 transition-transform duration-200 hover:-translate-y-1">
-                  <div className="flex items-center gap-3">
-                    <span style={{ fontFamily: FONT_MONO, color: C.amberDeep, fontSize: '0.85rem' }}>
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <div className="h-px flex-1" style={{ backgroundColor: C.hairDark }} />
-                    <Icon size={18} color={C.graphiteSoft} />
-                  </div>
-                  <h3 style={{ fontFamily: FONT_DISPLAY, fontWeight: 600, fontSize: '1.02rem' }}>{step.title}</h3>
-                  <p style={{ color: C.graphiteSoft, fontSize: '0.9rem', lineHeight: 1.6 }}>{step.body}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* EPC */}
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <Building2 className="text-green-500 mb-4" size={40} />
 
-        {/* ---------- Projects ---------- */}
-        <section id="projects" style={{ backgroundColor: C.mist }} className="py-20 sm:py-28">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8">
-            <div className="max-w-2xl">
-              <span style={{ fontFamily: FONT_MONO, color: C.tealDeep, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-                PROJECTS
-              </span>
-              <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: '2rem', fontWeight: 700, marginTop: '0.5rem' }}>
-                Recently commissioned
-              </h2>
-            </div>
+              <h3 className="text-xl font-bold mb-4">
+                GNIT EPC & Infrastructure
+              </h3>
 
-            <div className="mt-12 grid sm:grid-cols-3 gap-6">
-              {PROJECTS.map((project) => (
-                <div
-                  key={project.name}
-                  className="p-6 rounded-2xl flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-                  style={{ backgroundColor: C.cloud, border: `1px solid ${C.hairDark}` }}
-                >
-                  <div className="flex items-center gap-1.5 text-xs" style={{ color: C.graphiteSoft }}>
-                    <MapPin size={13} />
-                    {project.location}
-                  </div>
-                  <h3 style={{ fontFamily: FONT_DISPLAY, fontWeight: 600, fontSize: '1.02rem' }}>{project.name}</h3>
-                  <span style={{ fontFamily: FONT_MONO, fontSize: '0.82rem', color: C.graphiteSoft }}>
-                    {project.detail}
-                  </span>
-                  <div className="flex items-center gap-1.5 text-sm font-medium mt-1" style={{ color: C.tealDeep }}>
-                    <CheckCircle2 size={15} />
-                    {project.result}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-12 p-7 sm:p-8 rounded-2xl flex flex-col gap-4" style={{ backgroundColor: C.slate }}>
-              <Quote size={22} color={C.amber} />
-              <p style={{ color: C.cloud, fontSize: '1.05rem', lineHeight: 1.6, fontFamily: FONT_DISPLAY, fontWeight: 500 }}>
-                GNIT LTD modeled our cold storage load down to the compressor cycles. The wind
-                turbines cover the night shift that solar never could.
+              <p className="text-slate-300">
+                Engineering, Procurement and Construction services for public
+                and private sector infrastructure projects.
               </p>
-              <span className="text-sm" style={{ color: 'rgba(250,250,247,0.6)' }}>
-                Priya Chandran, Facilities Director, Bridgeport Cold Storage
-              </span>
             </div>
-          </div>
-        </section>
 
-        {/* ---------- Contact ---------- */}
-        <section id="contact" className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div>
-              <span style={{ fontFamily: FONT_MONO, color: C.tealDeep, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-                CONTACT
-              </span>
-              <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: '2rem', fontWeight: 700, marginTop: '0.5rem' }}>
-                Get a proposal in five business days
-              </h2>
-              <p className="mt-4 text-base" style={{ color: C.graphiteSoft, lineHeight: 1.6 }}>
-                Tell us about your site and current energy spend. An engineer will follow up with
-                a modeled proposal, not a generic quote.
+            {/* ENERGY */}
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <Sun className="text-green-500 mb-4" size={40} />
+
+              <h3 className="text-xl font-bold mb-4">
+                GNIT Energy
+              </h3>
+
+              <p className="text-slate-300">
+                Renewable energy solutions including solar, hybrid systems,
+                battery storage and wind energy projects.
               </p>
-
-              <div className="mt-8 flex flex-col gap-3">
-                <div className="flex items-center gap-3 text-sm" style={{ color: C.graphiteSoft }}>
-                  <Mail size={16} /> proposals@gnitltd.example
-                </div>
-                <div className="flex items-center gap-3 text-sm" style={{ color: C.graphiteSoft }}>
-                  <Phone size={16} /> (843) 555-0142
-                </div>
-                <div className="flex items-center gap-3 text-sm" style={{ color: C.graphiteSoft }}>
-                  <MapPin size={16} /> Charleston, SC — serving the Southeast and Mid-Atlantic
-                </div>
-              </div>
             </div>
 
-            <div className="rounded-2xl p-7 sm:p-8" style={{ backgroundColor: C.mist, border: `1px solid ${C.hairDark}` }}>
-              {submitted ? (
-                <div className="flex flex-col items-center text-center gap-3 py-10">
-                  <CheckCircle2 size={32} color={C.tealDeep} />
-                  <h3 style={{ fontFamily: FONT_DISPLAY, fontWeight: 600, fontSize: '1.1rem' }}>Request received</h3>
-                  <p style={{ color: C.graphiteSoft, fontSize: '0.92rem' }}>
-                    An engineer will reach out within five business days with a modeled proposal.
-                  </p>
-                </div>
-              ) : (
-                <form
-                  className="flex flex-col gap-4"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSubmitted(true);
-                  }}
-                >
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label htmlFor="name" className="text-sm font-medium">Name</label>
-                      <input
-                        id="name"
-                        type="text"
-                        required
-                        className="px-3 py-2.5 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-offset-2"
-                        style={{ border: `1px solid ${C.hairDark}`, backgroundColor: C.cloud }}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label htmlFor="company" className="text-sm font-medium">Company</label>
-                      <input
-                        id="company"
-                        type="text"
-                        required
-                        className="px-3 py-2.5 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-offset-2"
-                        style={{ border: `1px solid ${C.hairDark}`, backgroundColor: C.cloud }}
-                      />
-                    </div>
-                  </div>
+            {/* ICT */}
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <Network className="text-green-500 mb-4" size={40} />
 
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="email" className="text-sm font-medium">Email</label>
-                    <input
-                      id="email"
-                      type="email"
-                      required
-                      className="px-3 py-2.5 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-offset-2"
-                      style={{ border: `1px solid ${C.hairDark}`, backgroundColor: C.cloud }}
-                    />
-                  </div>
+              <h3 className="text-xl font-bold mb-4">
+                GNIT ICT
+              </h3>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="message" className="text-sm font-medium">Tell us about your site</label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      className="px-3 py-2.5 rounded-lg text-sm resize-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                      style={{ border: `1px solid ${C.hairDark}`, backgroundColor: C.cloud }}
-                    />
-                  </div>
+              <p className="text-slate-300">
+                Enterprise networking, fibre infrastructure, cybersecurity,
+                data centres and digital transformation solutions.
+              </p>
+            </div>
 
-                  <button
-                    type="submit"
-                    className="mt-2 text-sm font-semibold px-5 py-3 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2"
-                    style={{ backgroundColor: C.amber, color: C.ink }}
-                  >
-                    Send request
-                  </button>
-                </form>
-              )}
+            {/* SECURITY */}
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <Shield className="text-green-500 mb-4" size={40} />
+
+              <h3 className="text-xl font-bold mb-4">
+                GNIT Security
+              </h3>
+
+              <p className="text-slate-300">
+                CCTV surveillance, access control, intrusion detection and
+                integrated electronic security systems.
+              </p>
             </div>
           </div>
-        </section>
-      </main>
-
-      {/* ---------- Footer ---------- */}
-      <footer style={{ backgroundColor: C.ink }} className="py-12">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-          <div className="flex items-center gap-2" style={{ color: C.cloud }}>
-            <Mark size={34} />
-            <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: '1.35rem' }}>GNIT LTD</span>
-          </div>
-          <nav className="flex flex-wrap gap-6">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                className="text-sm focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
-                style={{ color: 'rgba(250,250,247,0.6)' }}
-              >
-                {link.label}
-              </button>
-            ))}
-          </nav>
-          <span className="text-xs" style={{ color: 'rgba(250,250,247,0.4)' }}>
-            © 2026 GNIT LTD. Figures shown are illustrative.
-          </span>
         </div>
-      </footer>
-
-      {pastHero && !inContact && (
-        <div className="fixed bottom-5 inset-x-5 sm:inset-x-auto sm:right-6 sm:bottom-6 z-30 flex justify-center sm:justify-end">
-          <button
-            onClick={() => scrollTo('contact')}
-            className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-full shadow-lg transition-transform duration-200 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-offset-2"
-            style={{ backgroundColor: C.amber, color: C.ink }}
-          >
-            Request a proposal <ArrowRight size={16} />
-          </button>
-        </div>
-      )}
+      </section>
     </div>
   );
 }
+
+      {/* SERVICES */}
+      <section id="services" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-600 font-semibold uppercase">
+              Services
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Comprehensive Infrastructure Solutions
+            </h2>
+
+            <p className="text-slate-600 mt-4 max-w-3xl mx-auto">
+              GNIT provides end-to-end engineering, technology, energy and
+              security services designed to support sustainable development and
+              operational excellence.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="border rounded-xl p-8 hover:shadow-lg transition">
+              <h3 className="font-bold text-xl mb-4">
+                EPC & Infrastructure
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>Engineering Design</li>
+                <li>Procurement</li>
+                <li>Construction Management</li>
+                <li>Project Delivery</li>
+                <li>Technical Consultancy</li>
+              </ul>
+            </div>
+
+            <div className="border rounded-xl p-8 hover:shadow-lg transition">
+              <h3 className="font-bold text-xl mb-4">
+                Renewable Energy
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>Solar PV Systems</li>
+                <li>Hybrid Energy Systems</li>
+                <li>Battery Storage</li>
+                <li>Wind Energy</li>
+                <li>Operations & Maintenance</li>
+              </ul>
+            </div>
+
+            <div className="border rounded-xl p-8 hover:shadow-lg transition">
+              <h3 className="font-bold text-xl mb-4">
+                ICT Infrastructure
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>Enterprise Networking</li>
+                <li>Fiber Optics</li>
+                <li>Data Centres</li>
+                <li>Cybersecurity</li>
+                <li>Systems Integration</li>
+              </ul>
+            </div>
+
+            <div className="border rounded-xl p-8 hover:shadow-lg transition">
+              <h3 className="font-bold text-xl mb-4">
+                Security Systems
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>CCTV Surveillance</li>
+                <li>Access Control</li>
+                <li>Intrusion Detection</li>
+                <li>Perimeter Security</li>
+                <li>Monitoring Solutions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SMART COMMUNITIES */}
+      <section className="py-24 bg-slate-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-600 font-semibold uppercase">
+              Flagship Solution
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              GNIT Smart Communities™
+            </h2>
+
+            <p className="text-slate-600 mt-4 max-w-3xl mx-auto">
+              Integrated digital, energy and security infrastructure for modern
+              residential estates, business parks, educational campuses and
+              mixed-use developments.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <h3 className="font-bold text-2xl mb-6">
+                Connectivity
+              </h3>
+
+              <ul className="space-y-3 text-slate-600">
+                <li>✓ Fiber Optic Backbone</li>
+                <li>✓ GPON Infrastructure</li>
+                <li>✓ Enterprise WiFi</li>
+                <li>✓ Structured Cabling</li>
+                <li>✓ Internet Distribution</li>
+              </ul>
+            </div>
+
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <h3 className="font-bold text-2xl mb-6">
+                Security
+              </h3>
+
+              <ul className="space-y-3 text-slate-600">
+                <li>✓ CCTV Surveillance</li>
+                <li>✓ Access Control</li>
+                <li>✓ Visitor Management</li>
+                <li>✓ Perimeter Security</li>
+                <li>✓ Monitoring Systems</li>
+              </ul>
+            </div>
+
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <h3 className="font-bold text-2xl mb-6">
+                Energy
+              </h3>
+
+              <ul className="space-y-3 text-slate-600">
+                <li>✓ Solar Infrastructure</li>
+                <li>✓ Hybrid Power Systems</li>
+                <li>✓ Battery Storage</li>
+                <li>✓ Solar Street Lighting</li>
+                <li>✓ Smart Metering Ready</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SOLUTION PACKAGES */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-600 font-semibold uppercase">
+              Industry Solutions
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Tailored Infrastructure Solutions
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="border rounded-xl p-8">
+              <h3 className="text-2xl font-bold mb-4">
+                Smart Schools™
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>Campus Fiber Network</li>
+                <li>Enterprise WiFi</li>
+                <li>Solar Power Systems</li>
+                <li>CCTV Monitoring</li>
+                <li>Access Control</li>
+                <li>Digital Learning Infrastructure</li>
+              </ul>
+            </div>
+
+            <div className="border rounded-xl p-8">
+              <h3 className="text-2xl font-bold mb-4">
+                Smart Hospitals™
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>Hybrid Power Systems</li>
+                <li>Secure ICT Infrastructure</li>
+                <li>Data Centres</li>
+                <li>CCTV Systems</li>
+                <li>Access Control</li>
+                <li>Telemedicine Support</li>
+              </ul>
+            </div>
+
+            <div className="border rounded-xl p-8">
+              <h3 className="text-2xl font-bold mb-4">
+                Smart Government Facilities™
+              </h3>
+
+              <ul className="space-y-2 text-slate-600">
+                <li>Data Centre Infrastructure</li>
+                <li>Fiber Backbone</li>
+                <li>Security Command Centre</li>
+                <li>Solar Backup Systems</li>
+                <li>Integrated Monitoring</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* INDUSTRIES */}
+      <section className="py-24 bg-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-500 font-semibold uppercase">
+              Industries Served
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Supporting Critical Sectors
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              "Government",
+              "Education",
+              "Healthcare",
+              "Telecommunications",
+              "Manufacturing",
+              "Commercial Real Estate",
+              "Agriculture",
+              "Hospitality",
+            ].map((industry) => (
+              <div
+                key={industry}
+                className="bg-slate-800 p-6 rounded-xl text-center"
+              >
+                {industry}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WHY GNIT */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-600 font-semibold uppercase">
+              Why GNIT
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              A Trusted Infrastructure Partner
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-8">
+            <div>
+              <h3 className="font-bold text-xl mb-4">
+                Integrated Expertise
+              </h3>
+
+              <p className="text-slate-600">
+                Energy, ICT, Security and EPC services under one organization.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-4">
+                End-to-End Delivery
+              </h3>
+
+              <p className="text-slate-600">
+                Complete project lifecycle management from design to support.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-4">
+                Quality & Safety
+              </h3>
+
+              <p className="text-slate-600">
+                Commitment to excellence, compliance and operational safety.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl mb-4">
+                Sustainable Innovation
+              </h3>
+
+              <p className="text-slate-600">
+                Future-ready infrastructure solutions designed for growth.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* PROJECTS */}
+      <section id="projects" className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-600 font-semibold uppercase">
+              Project Experience
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Delivering Critical Infrastructure Solutions
+            </h2>
+
+            <p className="text-slate-600 mt-4 max-w-3xl mx-auto">
+              GNIT supports public and private sector organizations through the
+              successful delivery of engineering, ICT, security and renewable
+              energy projects.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-8">
+            <div className="bg-white p-8 rounded-xl shadow-sm">
+              <h3 className="font-bold text-xl mb-4">
+                ICT Infrastructure
+              </h3>
+
+              <p className="text-slate-600">
+                Enterprise networks, wireless deployments, structured cabling,
+                data centres and cybersecurity solutions.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-sm">
+              <h3 className="font-bold text-xl mb-4">
+                Renewable Energy
+              </h3>
+
+              <p className="text-slate-600">
+                Solar power systems, hybrid energy infrastructure, battery
+                storage and sustainable power solutions.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-sm">
+              <h3 className="font-bold text-xl mb-4">
+                Security Systems
+              </h3>
+
+              <p className="text-slate-600">
+                CCTV surveillance, access control, perimeter protection and
+                integrated security platforms.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-sm">
+              <h3 className="font-bold text-xl mb-4">
+                EPC Services
+              </h3>
+
+              <p className="text-slate-600">
+                Engineering design, procurement, construction management and
+                infrastructure project delivery.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HSE & QUALITY */}
+      <section id="hse" className="py-24 bg-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-500 font-semibold uppercase">
+              HSE & Quality
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Safety, Quality and Sustainability
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-2xl font-bold mb-6">
+                Our Commitment
+              </h3>
+
+              <p className="text-slate-300 mb-6">
+                GNIT is committed to maintaining the highest standards of
+                health, safety, environmental stewardship and quality
+                management across all operations.
+              </p>
+
+              <ul className="space-y-4">
+                <li>✓ Zero Harm Philosophy</li>
+                <li>✓ Environmental Protection</li>
+                <li>✓ Regulatory Compliance</li>
+                <li>✓ Continuous Improvement</li>
+                <li>✓ Quality Assurance</li>
+              </ul>
+            </div>
+
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <h3 className="text-2xl font-bold mb-6">
+                Core Objectives
+              </h3>
+
+              <div className="space-y-4">
+                <div className="border-b border-slate-700 pb-4">
+                  Zero Major Incidents
+                </div>
+
+                <div className="border-b border-slate-700 pb-4">
+                  Safe Project Delivery
+                </div>
+
+                <div className="border-b border-slate-700 pb-4">
+                  Client Satisfaction
+                </div>
+
+                <div className="border-b border-slate-700 pb-4">
+                  Sustainable Infrastructure Development
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CAREERS */}
+      <section id="careers" className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center">
+            <span className="text-green-600 font-semibold uppercase">
+              Careers
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Build the Future With GNIT
+            </h2>
+
+            <p className="text-slate-600 mt-6 max-w-3xl mx-auto">
+              We are always interested in hearing from talented professionals
+              across engineering, energy, ICT, security and project management
+              disciplines.
+            </p>
+
+            <div className="mt-10">
+              <a
+                href="mailto:info@gnit-ltd.com"
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg inline-block"
+              >
+                Submit Your CV
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT */}
+      <section
+        id="contact"
+        className="py-24 bg-gradient-to-r from-slate-900 to-slate-800 text-white"
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-green-500 font-semibold uppercase">
+              Contact Us
+            </span>
+
+            <h2 className="text-4xl font-bold mt-4">
+              Let's Discuss Your Next Project
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-10">
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <Mail size={32} className="text-green-500 mb-4" />
+
+              <h3 className="font-bold text-xl mb-4">
+                Email
+              </h3>
+
+              <p>info@gnit-ltd.com</p>
+            </div>
+
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <Phone size={32} className="text-green-500 mb-4" />
+
+              <h3 className="font-bold text-xl mb-4">
+                Phone / WhatsApp
+              </h3>
+
+              <p>+234 805 999 1118</p>
+            </div>
+
+            <div className="bg-slate-800 p-8 rounded-xl">
+              <MapPin size={32} className="text-green-500 mb-4" />
+
+              <h3 className="font-bold text-xl mb-4">
+                Head Office
+              </h3>
+
+              <p>Abuja, Nigeria</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-black text-white py-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-3 gap-10">
+            <div>
+              <h2 className="text-2xl font-bold">
+                GNIT <span className="text-green-500">LTD</span>
+              </h2>
+
+              <p className="text-slate-400 mt-4">
+                Engineering Critical Infrastructure for Africa
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold mb-4">
+                Strategic Business Units
+              </h3>
+
+              <ul className="space-y-2 text-slate-400">
+                <li>GNIT EPC & Infrastructure</li>
+                <li>GNIT Energy</li>
+                <li>GNIT ICT</li>
+                <li>GNIT Security</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-bold mb-4">
+                Contact Information
+              </h3>
+
+              <ul className="space-y-2 text-slate-400">
+                <li>info@gnit-ltd.com</li>
+                <li>+234 805 999 1118</li>
+                <li>Abuja, Nigeria</li>
+                <li>RC 1551039</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-800 mt-10 pt-8 text-center text-slate-500">
+            © {new Date().getFullYear()} GNIT LTD. All Rights Reserved.
+          </div>
+        </div>
+      </footer>
