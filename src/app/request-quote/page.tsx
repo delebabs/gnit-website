@@ -1,0 +1,2 @@
+import PageHero from '@/components/ui/PageHero'; import QuoteForm from '@/components/forms/QuoteForm';
+export default function Quote(){return <><PageHero badge='REQUEST A QUOTATION' title="Let&apos;s Discuss Your Next Project." description='Provide your project requirements and our engineering team will prepare a tailored technical and commercial proposal.'/><section className='section'><div className='container max-w-5xl'><QuoteForm/></div></section></>}

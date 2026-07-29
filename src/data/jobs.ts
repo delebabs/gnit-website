@@ -1,0 +1,1 @@
+export const jobs=[{id:1,title:'Solar Design Engineer',location:'Abuja',department:'Renewable Energy',type:'Full Time'},{id:2,title:'Network Infrastructure Engineer',location:'Abuja',department:'ICT',type:'Full Time'}];
