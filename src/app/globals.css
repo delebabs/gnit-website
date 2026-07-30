@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; --gnit-navy:#061d39; --gnit-green:#43a047; --gnit-green-dark:#2f7d33; --gnit-mist:#eef4ee; }
+:root { color-scheme: light; --gnit-navy:#0F172A; --gnit-green:#16A34A; --gnit-steel:#64748B; --gnit-mist:#F8FAFC; }
 html { scroll-behavior: smooth; }
-body { margin:0; background:#fff; color:#152235; font-family: Arial, Helvetica, sans-serif; }
+body { margin:0; background:#fff; color:#0F172A; font-family: Arial, Helvetica, sans-serif; }
 * { box-sizing:border-box; }
 a { text-decoration:none; }
 .container { @apply mx-auto w-full max-w-[1320px] px-5 md:px-8; }
