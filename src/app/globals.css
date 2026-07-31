@@ -4,9 +4,10 @@
 
 :root { color-scheme: light; --gnit-navy:#0F172A; --gnit-green:#16A34A; --gnit-steel:#64748B; --gnit-mist:#F8FAFC; }
 html { scroll-behavior: smooth; }
-body { margin:0; background:#fff; color:#0F172A; font-family: Arial, Helvetica, sans-serif; }
+body { margin:0; background:#fff; color:#0F172A; font-family:Arial,Helvetica,sans-serif; }
 * { box-sizing:border-box; }
 a { text-decoration:none; }
-.container { @apply mx-auto w-full max-w-[1320px] px-5 md:px-8; }
+.container { width:100% !important; max-width:none !important; margin-left:0 !important; margin-right:0 !important; padding-left:2.5rem; padding-right:2.5rem; }
+@media (min-width:1536px) { .container { padding-left:3.5rem; padding-right:3.5rem; } }
 .section { @apply py-16 md:py-24; }
 .card { @apply bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl; }
