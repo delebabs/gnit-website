@@ -1,26 +1,4 @@
-import PageHero from '@/components/ui/PageHero';
-import SectionHeader from '@/components/ui/SectionHeader';
-import { services } from '@/data/services';
-
-export default function Page() {
-  const data = services.find((service) => service.slug === 'ict')!;
-
-  return (
-    <>
-      <PageHero badge="ICT INFRASTRUCTURE" title={data.title} description={data.description} />
-      <section className="section">
-        <div className="container">
-          <SectionHeader badge="CAPABILITIES" title={data.title} description={data.description} center />
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {['Enterprise Networking', 'Structured Cabling', 'Wireless Infrastructure', 'Data Centres', 'Cloud Integration', 'Managed ICT Services'].map((item) => (
-              <div key={item} className="card p-7">
-                <h3 className="text-xl font-bold">{item}</h3>
-                <p className="mt-3 text-slate-600">Professional design, deployment, testing, documentation and lifecycle support.</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
+import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+const image='https://images.unsplash.com/photo-1695668548342-c0c1ad479aee?auto=format&fit=crop&q=85&w=1600';
+const items:Capability[]=[['Enterprise Networking','Resilient LAN, WAN and network security designed for critical operations.'],['Structured Cabling','Standards-compliant copper and fibre cabling systems, tested and documented.'],['Wireless Infrastructure','Reliable enterprise Wi-Fi designed for coverage, capacity and secure access.'],['Data Centres','Server-room and data-centre infrastructure with dependable power, cooling and connectivity.'],['Cloud Integration','Secure cloud connectivity, backup and business continuity solutions.'],['Managed ICT Services','Monitoring, preventive maintenance and technical support for dependable operations.']].map(([title,description])=>({title,description,image}));
+export default function ICT(){return <><PageHero badge="ICT INFRASTRUCTURE" title="Digital Infrastructure That Performs." description="Enterprise networking, fibre optics, structured cabling, wireless and data centres."/><section className="section bg-[#F8FAFC]"><div className="container"><SectionHeader badge="CAPABILITIES" title="ICT Infrastructure" description="Secure, scalable systems that connect people, facilities and mission-critical operations." center/><CapabilityGrid items={items}/></div></section></>}

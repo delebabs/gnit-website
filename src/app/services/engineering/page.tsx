@@ -1,26 +1,4 @@
-import PageHero from '@/components/ui/PageHero';
-import SectionHeader from '@/components/ui/SectionHeader';
-import { services } from '@/data/services';
-
-export default function Page() {
-  const data = services.find((service) => service.slug === 'engineering')!;
-
-  return (
-    <>
-      <PageHero badge="ENGINEERING CONSULTANCY" title={data.title} description={data.description} />
-      <section className="section">
-        <div className="container">
-          <SectionHeader badge="CAPABILITIES" title={data.title} description={data.description} center />
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {['Consultation', 'Engineering Design', 'Implementation', 'Testing & Commissioning', 'Maintenance', 'Technical Support'].map((item) => (
-              <div key={item} className="card p-7">
-                <h3 className="text-xl font-bold">{item}</h3>
-                <p className="mt-3 text-slate-600">Professional delivery with disciplined project governance and lifecycle support.</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
+import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+const image='https://images.unsplash.com/photo-1735571919545-5bbfd52b8f3d?auto=format&fit=crop&q=85&w=1600';
+const items:Capability[]=[['Feasibility Studies','Technical and commercial assessments that establish an informed project path.'],['Engineering Design','Concept-to-detail design for safe, compliant and efficient infrastructure.'],['Procurement Support','Technical specifications, vendor evaluation and equipment selection support.'],['Project Management','Planning, risk management, coordination and disciplined project delivery.'],['Construction Supervision','Site supervision, inspection and quality assurance through execution.'],['Technical Advisory','Independent expert support for complex infrastructure decisions and assurance.']].map(([title,description])=>({title,description,image}));
+export default function Engineering(){return <><PageHero badge="ENGINEERING CONSULTANCY" title="Engineering Expertise From Concept To Completion." description="Engineering design, project management, feasibility studies and technical advisory."/><section className="section bg-[#F8FAFC]"><div className="container"><SectionHeader badge="CAPABILITIES" title="Engineering Consultancy" description="Professional guidance and technical control throughout the infrastructure lifecycle." center/><CapabilityGrid items={items}/></div></section></>}

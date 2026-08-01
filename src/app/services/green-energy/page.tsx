@@ -1,26 +1,4 @@
-import PageHero from '@/components/ui/PageHero';
-import SectionHeader from '@/components/ui/SectionHeader';
-import { services } from '@/data/services';
-
-export default function Page() {
-  const data = services.find((service) => service.slug === 'green-energy')!;
-
-  return (
-    <>
-      <PageHero badge="GREEN ENERGY" title={data.title} description={data.description} />
-      <section className="section">
-        <div className="container">
-          <SectionHeader badge="CAPABILITIES" title={data.title} description={data.description} center />
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {['Consultation', 'Engineering Design', 'Implementation', 'Testing & Commissioning', 'Maintenance', 'Technical Support'].map((item) => (
-              <div key={item} className="card p-7">
-                <h3 className="text-xl font-bold">{item}</h3>
-                <p className="mt-3 text-slate-600">Professional delivery with disciplined project governance and lifecycle support.</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
+import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+const image='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=85&w=1600';
+const items:Capability[]=[['Solar PV Systems','Grid-tied, off-grid and hybrid solar systems engineered for reliable performance.'],['Hybrid Power Systems','Integrated solar, battery and generator systems for continuous, efficient power.'],['Battery Energy Storage','Scalable battery storage for resilience, peak-load management and backup capacity.'],['Commercial & Industrial Energy','Renewable energy infrastructure designed around operational demand and return on investment.'],['Energy Audits','Site assessments that identify efficiency improvements and reduce energy cost.'],['Operations & Maintenance','Preventive maintenance, monitoring and responsive lifecycle support.']].map(([title,description])=>({title,description,image}));
+export default function GreenEnergy(){return <><PageHero badge="GREEN ENERGY" title="Renewable Energy Built For Performance." description="Solar PV, hybrid power systems, battery energy storage and energy audits."/><section className="section bg-[#F8FAFC]"><div className="container"><SectionHeader badge="CAPABILITIES" title="Green Energy Solutions" description="Complete engineering, procurement, installation and lifecycle support for clean energy infrastructure." center/><CapabilityGrid items={items}/></div></section></>}
