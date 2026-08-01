@@ -4,9 +4,9 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: { default: 'GNIT | Engineering • Renewable Energy • ICT • Security', template: '%s | GNIT' },
-  description: 'GNIT delivers engineering consultancy, renewable energy, ICT infrastructure and electronic security solutions across Nigeria.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+  title: { default: 'GNIT | EPC • Energy • ICT • Security', template: '%s | GNIT' },
+  description: 'GNIT LTD is a multidisciplinary EPC company delivering integrated Energy, ICT, Security and Engineering solutions throughout Nigeria.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
 };
 
 export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) {
