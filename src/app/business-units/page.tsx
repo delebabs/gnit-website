@@ -2,10 +2,39 @@ import Link from 'next/link';
 import PageHero from '@/components/ui/PageHero';
 
 const units = [
-  {title:'GNIT EPC & Infrastructure',href:'/services/engineering',description:'Engineering, procurement and construction services from concept development to commissioning and operational support.',services:['Engineering design','Project management','Procurement services','Construction supervision','Installation & commissioning']},
-  {title:'GNIT Energy',href:'/services/green-energy',description:'Renewable and conventional energy solutions that improve reliability and reduce operating cost.',services:['Solar PV systems','Hybrid power systems','Battery energy storage','Energy audits','Microgrids']},
-  {title:'GNIT ICT',href:'/services/ict',description:'Modern communications and information technology infrastructure for organisations of every size.',services:['Enterprise networking','Structured cabling','Fibre & GPON','Data communications','Wireless infrastructure']},
-  {title:'GNIT Security',href:'/services/security',description:'Integrated security systems for commercial, industrial and institutional environments.',services:['CCTV surveillance','Access control','Intrusion detection','Visitor management','Perimeter protection']},
+  { title: 'GNIT EPC & Infrastructure', href: '/services/engineering', description: 'Engineering, procurement and construction services from concept development to commissioning and operational support.', services: ['Engineering design', 'Project management', 'Procurement services', 'Construction supervision', 'Installation & commissioning'] },
+  { title: 'GNIT Energy', href: '/services/green-energy', description: 'Renewable and conventional energy solutions that improve reliability and reduce operating cost.', services: ['Solar PV systems', 'Hybrid power systems', 'Battery energy storage', 'Energy audits', 'Microgrids'] },
+  { title: 'GNIT ICT', href: '/services/ict', description: 'Modern communications and information technology infrastructure for organisations of every size.', services: ['Enterprise networking', 'Structured cabling', 'Fibre & GPON', 'Data communications', 'Wireless infrastructure'] },
+  { title: 'GNIT Security', href: '/services/security', description: 'Integrated security systems for commercial, industrial and institutional environments.', services: ['CCTV surveillance', 'Access control', 'Intrusion detection', 'Visitor management', 'Perimeter protection'] },
 ];
 
-export default function BusinessUnits(){return <><PageHero badge="BUSINESS UNITS" title="Specialist Capability. One Integrated GNIT." description="Four strategic business units combine deep domain expertise with coordinated, end-to-end project delivery."/><section className="section bg-[#F8FAFC]"><div className="container grid gap-6 lg:grid-cols-2">{units.map((unit,index)=><article key={unit.title} className="border-t-4 border-[#16A34A] bg-white p-8 md:p-10"><span className="text-sm font-black text-[#16A34A]">0{index+1}</span><h2 className="mt-3 text-3xl font-black text-[#0F172A]">{unit.title}</h2><p className="mt-4 leading-8 text-slate-600">{unit.description}</p><ul className="mt-7 grid gap-3 sm:grid-cols-2">{unit.services.map(service=><li key={service} className="border-l-2 border-[#16A34A] pl-3 text-sm font-bold text-slate-700">{service}</li>)}</ul><Link href={unit.href} className="mt-8 inline-block bg-[#0F172A] px-5 py-3 text-sm font-bold uppercase text-white transition hover:bg-[#16A34A]">Explore this unit</Link></article>)}</div></section><section className="section"><div className="container bg-[#0F172A] p-8 text-white md:p-12"><p className="text-sm font-bold uppercase tracking-[.22em] text-[#65d66a]">Flagship solution</p><h2 className="mt-4 text-4xl font-black">GNIT Smart Communities™</h2><p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">A unified infrastructure platform for estates, institutions, campuses, industrial parks and mixed-use developments: renewable energy, fibre connectivity, enterprise networking, CCTV, access control, smart metering and central monitoring.</p></div></section></>}
+export default function BusinessUnits() {
+  return (
+    <>
+      <PageHero badge="BUSINESS UNITS" title="Specialist Capability. One Integrated GNIT." description="Four strategic business units combine deep domain expertise with coordinated, end-to-end project delivery." />
+      <section className="section bg-[#F8FAFC]">
+        <div className="container grid gap-6 lg:grid-cols-2">
+          {units.map((unit) => (
+            <article key={unit.title} className="border-t-4 border-[#16A34A] bg-white p-8 md:p-10">
+              <h2 className="text-3xl font-black text-[#0F172A]">{unit.title}</h2>
+              <p className="mt-4 leading-8 text-slate-600">{unit.description}</p>
+              <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+                {unit.services.map((service) => (
+                  <li key={service} className="border-l-2 border-[#16A34A] pl-3 text-sm font-bold text-slate-700">{service}</li>
+                ))}
+              </ul>
+              <Link href={unit.href} className="mt-8 inline-block bg-[#0F172A] px-5 py-3 text-sm font-bold uppercase text-white transition hover:bg-[#16A34A]">Explore this unit</Link>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="section">
+        <div className="container bg-[#0F172A] p-8 text-white md:p-12">
+          <p className="text-sm font-bold uppercase tracking-[.22em] text-[#65d66a]">Flagship solution</p>
+          <h2 className="mt-4 text-4xl font-black">GNIT Smart Communities™</h2>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">A unified infrastructure platform for estates, institutions, campuses, industrial parks and mixed-use developments: renewable energy, fibre connectivity, enterprise networking, CCTV, access control, smart metering and central monitoring.</p>
+        </div>
+      </section>
+    </>
+  );
+}
