@@ -16,6 +16,7 @@ const heroImages: Record<string, string> = {
   'ABOUT GNIT': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=95&w=2200',
   'COMPANY PROFILE': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=95&w=2200',
   'BUSINESS UNITS': '/images/gnit-reference-hero.png',
+  'SMART COMMUNITIES': '/images/smart-communities-hero.png',
   'DOWNLOADS': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=95&w=2200',
   'DOWNLOAD CENTRE': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=95&w=2200',
   'NEWS & INSIGHTS': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=95&w=2200',

@@ -12,7 +12,7 @@ const primaryLinks = [
 
 const menus = {
   Company: [['Company Overview', '/company'], ['About GNIT', '/about'], ['Clients & Partners', '/clients'], ['HSE & Quality', '/hse-quality']],
-  'Business Units': [['Green Energy', '/services/green-energy'], ['ICT Infrastructure', '/services/ict'], ['Electronic Security', '/services/security'], ['Engineering Consultancy', '/services/engineering']],
+  'Business Units': [['Green Energy', '/services/green-energy'], ['ICT Infrastructure', '/services/ict'], ['Electronic Security', '/services/security'], ['Engineering Consultancy', '/services/engineering'], ['Smart Communities', '/smart-communities']],
 };
 
 export default function Navbar() {
