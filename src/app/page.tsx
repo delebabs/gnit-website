@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, BriefcaseBusiness, ClipboardCheck, Network, ShieldCheck, Sun, Building2 } from 'lucide-react';
+import { ArrowRight, Network, ShieldCheck, Sun, Building2 } from 'lucide-react';
 
 const offerings = [
   { title: 'EPC & Infrastructure', copy: 'Planning, design, procurement, construction management, testing and commissioning.', icon: Building2 },
@@ -16,12 +16,9 @@ export default function Home() {
     <>
       <section className="relative isolate overflow-hidden bg-[#0F172A] pt-[92px] lg:pt-[132px]">
         <div className="relative hidden aspect-[3.14/1] min-h-[445px] lg:block">
-          <Image src="/images/gnit-reference-hero.png" alt="GNIT engineering infrastructure: power substation, communications tower, solar panels, CCTV camera and data centre" fill priority quality={100} unoptimized sizes="100vw" className="object-cover object-center" />
+          <Image src="/images/gnit-reference-hero-clean.png" alt="GNIT engineering infrastructure: power substation, communications tower, solar panels, CCTV camera and data centre" fill priority quality={100} unoptimized sizes="100vw" className="object-cover object-center" />
           <Link href="/request-consultation" aria-label="Request consultation" className="absolute left-[26.3%] top-[83.8%] h-[8.5%] w-[14.4%]" />
           <Link href="/services" aria-label="Explore services" className="absolute left-[41.4%] top-[83.8%] h-[8.5%] w-[14.4%]" />
-          <a href="https://wa.me/2348059991118" target="_blank" rel="noreferrer" aria-label="Chat with GNIT on WhatsApp" className="absolute right-0 top-[37.5%] h-[10.6%] w-[3.4%]" />
-          <a href="mailto:info@gnit-ltd.com" aria-label="Email GNIT" className="absolute right-0 top-[48.1%] h-[10.6%] w-[3.4%]" />
-          <a href="tel:+2348059991118" aria-label="Call GNIT" className="absolute right-0 top-[58.7%] h-[10.6%] w-[3.4%]" />
         </div>
         <div className="relative flex min-h-[580px] items-center bg-[linear-gradient(90deg,rgba(15,23,42,.90),rgba(15,23,42,.45)),url('/images/reference-infrastructure-hero.jpg')] bg-cover bg-center px-5 py-16 lg:hidden">
           <div className="max-w-3xl"><h1 className="text-5xl font-black uppercase leading-[1.06] tracking-[-.04em] text-white">Engineering<br />Critical Infrastructure<br /><span className="text-[#3fae43]">for Africa</span></h1><p className="mt-6 max-w-2xl text-lg leading-7 text-slate-100">GNIT LTD delivers integrated EPC, renewable energy, ICT infrastructure, security systems and consulting solutions that power industries, connect communities and support sustainable growth across Africa.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/request-consultation" className="bg-[#16A34A] px-6 py-4 text-sm font-bold uppercase text-white">Request consultation</Link><Link href="/services" className="border border-white px-6 py-4 text-sm font-bold uppercase text-white">Explore services</Link></div></div>
@@ -37,8 +34,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <section className="bg-[#0F172A]"><div className="container grid text-white md:grid-cols-4">{[[BriefcaseBusiness, '2019', 'Established'], [ClipboardCheck, 'RC 1551039', 'Registered company'], [Network, '4', 'Strategic business units'], [ShieldCheck, 'End-to-End', 'Lifecycle delivery']].map(([Icon, value, label]) => { const MetricIcon = Icon as typeof BriefcaseBusiness; return <div key={String(value)} className="flex items-center gap-5 border-b border-white/15 px-6 py-7 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"><MetricIcon className="text-[#16A34A]" size={37} /><div><strong className="block text-2xl leading-none">{String(value)}</strong><span className="mt-2 block text-sm font-semibold text-slate-200">{String(label)}</span></div></div>; })}</div></section>
 
       <section className="section bg-[#F8FAFC]">
         <div className="container grid items-stretch gap-8 lg:grid-cols-2">
