@@ -1,0 +1,20 @@
+GNIT BUILD 001 — EXECUTIVE HOMEPAGE
+
+Replace these files in your local repository:
+
+1. src/app/page.tsx
+2. src/app/layout.tsx
+3. src/components/layout/Footer.tsx
+4. Add src/components/shared/FloatingContact.tsx
+
+This build permanently removes "Established 2019" from the supplied files and replaces the homepage statistics strip with qualitative, non-inflated GNIT capability statements.
+
+Then run:
+
+npm run build
+
+git add .
+git commit -m "Build 001 - Executive homepage and remove Established 2019"
+git push
+
+Vercel will redeploy automatically.
