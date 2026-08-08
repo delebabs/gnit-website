@@ -1,3 +1,6 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation'; import {articles} from '@/data/articles'; import PageHero from '@/components/ui/PageHero';
+import { createPageMetadata } from '@/lib/seo';
 export function generateStaticParams(){return articles.map(a=>({slug:a.slug}));}
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const { slug } = await params; const a = articles.find((item) => item.slug === slug); return a ? createPageMetadata({ title: a.title, description: a.excerpt, path: `/news/${a.slug}`, keywords: [a.category, 'GNIT insights', 'engineering insights Nigeria'], image: a.image }) : {}; }
 export default async function Article({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const a=articles.find(x=>x.slug===slug);if(!a)notFound();return <><PageHero badge={a.category} title={a.title} description={a.excerpt}/><article className='section'><div className='container max-w-4xl'><p className='text-lg leading-9 text-slate-700'>GNIT publishes technical insight to help organisations understand engineering, energy, ICT and security trends relevant to operational resilience and sustainable growth.</p></div></article></>}

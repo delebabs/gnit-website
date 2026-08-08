@@ -3,6 +3,9 @@ import Link from 'next/link';
 import PageHero from '@/components/ui/PageHero';
 import SectionHeader from '@/components/ui/SectionHeader';
 import { services } from '@/data/services';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({ title: 'Engineering, Energy, ICT & Security Services', description: 'Explore GNIT capabilities in green energy, ICT infrastructure, electronic security and engineering consultancy across Nigeria.', path: '/services', keywords: ['engineering services Nigeria', 'solar EPC Nigeria', 'ICT infrastructure', 'electronic security'] });
 
 const imagery = [
   {src:'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=95&w=1800',alt:'Commercial solar PV installation'},

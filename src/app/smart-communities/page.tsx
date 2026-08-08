@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { ArrowRight, Building2, Cable, Camera, ChartNoAxesCombined, RadioTower, SunMedium } from 'lucide-react';
 import PageHero from '@/components/ui/PageHero';
 import SectionHeader from '@/components/ui/SectionHeader';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({ title: 'Smart Communities', description: 'GNIT Smart Communities integrates resilient energy, fibre connectivity, enterprise Wi-Fi, electronic security and smart operations for modern developments.', path: '/smart-communities', keywords: ['smart communities Nigeria', 'smart estate infrastructure', 'integrated infrastructure'] });
 
 const pillars = [
   { title: 'Resilient Energy', description: 'Solar PV, storage, backup generation and intelligent energy management for dependable daily operations.', icon: SunMedium },

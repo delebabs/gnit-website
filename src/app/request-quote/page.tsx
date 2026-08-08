@@ -1,2 +1,3 @@
-import PageHero from '@/components/ui/PageHero'; import QuoteForm from '@/components/forms/QuoteForm';
+import PageHero from '@/components/ui/PageHero'; import QuoteForm from '@/components/forms/QuoteForm'; import { createPageMetadata } from '@/lib/seo';
+export const metadata = createPageMetadata({ title: 'Request a Consultation', description: 'Request a GNIT consultation for energy, ICT, electronic security, engineering or Smart Communities projects in Nigeria.', path: '/request-quote', keywords: ['request engineering quote Nigeria', 'solar consultation Nigeria', 'ICT project consultation'] });
 export default function Quote(){return <><PageHero badge='REQUEST A QUOTATION' title="Let&apos;s Discuss Your Next Project." description='Provide your project requirements and our engineering team will prepare a tailored technical and commercial proposal.'/><section className='section'><div className='container max-w-5xl'><QuoteForm/></div></section></>}

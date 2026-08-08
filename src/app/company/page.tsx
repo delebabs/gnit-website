@@ -1,5 +1,8 @@
 import PageHero from '@/components/ui/PageHero';
 import SectionHeader from '@/components/ui/SectionHeader';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({ title: 'About GNIT', description: 'Learn about GNIT LTD, an Abuja-based multidisciplinary EPC company delivering energy, ICT, security and engineering solutions across Nigeria.', path: '/company', keywords: ['GNIT LTD', 'engineering company Abuja', 'EPC company Nigeria'] });
 
 const values = ['Integrity', 'Excellence', 'Safety', 'Innovation', 'Sustainability', 'Client Focus'];
 const delivery = ['Assessment & Planning', 'Engineering & Design', 'Procurement', 'Implementation', 'Support & Optimisation'];

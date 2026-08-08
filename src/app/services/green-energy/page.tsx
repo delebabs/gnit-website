@@ -1,4 +1,6 @@
 import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+import { createPageMetadata } from '@/lib/seo';
+export const metadata = createPageMetadata({ title: 'Green Energy Solutions', description: 'Solar PV, hybrid power, battery energy storage, microgrids, energy audits and lifecycle support from GNIT.', path: '/services/green-energy', keywords: ['solar PV Nigeria', 'battery energy storage Nigeria', 'hybrid power systems', 'energy audit'] });
 const items:Capability[]=[
   {title:'Solar PV Systems',description:'Grid-tied, off-grid and hybrid solar systems engineered for reliable performance.',image:'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=95&w=1800',imageAlt:'Commercial photovoltaic solar panels in operation'},
   {title:'Hybrid Power Systems',description:'Integrated solar, battery and generator systems for continuous, efficient power.',image:'/images/capabilities/hybrid-power-system.png',imageAlt:'Commercial hybrid power installation with solar panels, wind turbine, inverter and battery system'},

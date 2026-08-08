@@ -1,4 +1,6 @@
 import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+import { createPageMetadata } from '@/lib/seo';
+export const metadata = createPageMetadata({ title: 'Electronic Security Solutions', description: 'Integrated CCTV, access control, visitor management, perimeter protection and command-centre solutions from GNIT.', path: '/services/security', keywords: ['CCTV installation Nigeria', 'access control Nigeria', 'electronic security Abuja', 'visitor management'] });
 const items:Capability[]=[
   {title:'Video Surveillance',description:'Enterprise CCTV systems, video management and intelligent monitoring.',image:'https://images.unsplash.com/photo-1572044727169-8b7dda92916e?auto=format&fit=crop&q=95&w=1800',imageAlt:'Professional CCTV camera monitoring a facility'},
   {title:'Access Control',description:'Secure access control for people, vehicles and protected areas.',image:'https://images.unsplash.com/photo-1754494977436-a5c202306fe4?auto=format&fit=crop&q=95&w=1800',imageAlt:'Electronic card reader installed beside a secured entry door'},

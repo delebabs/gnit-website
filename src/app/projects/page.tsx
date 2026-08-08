@@ -1,6 +1,9 @@
 import PageHero from '@/components/ui/PageHero';
 import { projects } from '@/data/projects';
 import Link from 'next/link';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({ title: 'Projects & Sector Capabilities', description: 'Explore representative GNIT project capabilities in renewable energy, ICT infrastructure, electronic security, engineering and Smart Communities across Nigeria.', path: '/projects', keywords: ['engineering projects Nigeria', 'solar projects Nigeria', 'ICT projects Nigeria', 'security projects Nigeria'] });
 
 const projectVisuals: Record<string, { image: string; reference: string; referenceUrl: string }> = {
   'healthcare-energy-resilience': { image: 'https://static.longi.com/P_Vsolution_095dc7e7cc.jpg', reference: 'LONGi PV solutions', referenceUrl: 'https://www.longi.com/us/' },

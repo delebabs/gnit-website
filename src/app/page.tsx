@@ -1,6 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { ArrowRight, Network, ShieldCheck, Sun, Building2 } from 'lucide-react';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({ title: 'Engineering Critical Infrastructure for Africa', description: 'GNIT delivers integrated EPC, renewable energy, ICT infrastructure, electronic security and Smart Communities solutions across Nigeria.', path: '/', keywords: ['EPC Nigeria', 'renewable energy Nigeria', 'ICT infrastructure Nigeria', 'electronic security Nigeria'] });
 
 const offerings = [
   { title: 'EPC & Infrastructure', copy: 'Planning, design, procurement, construction management, testing and commissioning.', icon: Building2 },

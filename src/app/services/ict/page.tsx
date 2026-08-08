@@ -1,4 +1,6 @@
 import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+import { createPageMetadata } from '@/lib/seo';
+export const metadata = createPageMetadata({ title: 'ICT Infrastructure Solutions', description: 'GNIT designs enterprise networking, fibre optics, GPON, structured cabling, Wi-Fi and data-centre infrastructure.', path: '/services/ict', keywords: ['enterprise networking Nigeria', 'fibre optic Nigeria', 'GPON Nigeria', 'data centre infrastructure'] });
 const items:Capability[]=[
   {title:'Enterprise Networking',description:'Resilient LAN, WAN and network security designed for critical operations.',image:'https://images.unsplash.com/photo-1695668548342-c0c1ad479aee?auto=format&fit=crop&q=95&w=1800',imageAlt:'Enterprise network switches and managed equipment'},
   {title:'Structured Cabling',description:'Standards-compliant copper and fibre cabling systems, tested and documented.',image:'https://images.unsplash.com/photo-1624965439943-09e0238644e2?auto=format&fit=crop&q=95&w=1800',imageAlt:'Installed structured cabling in a communications enclosure'},

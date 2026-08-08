@@ -1,5 +1,8 @@
 import PageHero from '@/components/ui/PageHero';
 import { CheckCircle2, ShieldCheck, UsersRound } from 'lucide-react';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata = createPageMetadata({ title: 'HSE & Quality', description: 'GNIT quality, health, safety and environmental commitments for safe, compliant and continuously improving operations.', path: '/hse-quality', keywords: ['HSE policy Nigeria', 'quality management engineering', 'safe operations'] });
 
 const quality = ['Deliver projects on time and within budget.', 'Achieve client satisfaction through reliable delivery.', 'Maintain technical excellence and competent personnel.', 'Apply a structured process approach and improve continually.'];
 const hse = ['Conduct all operations safely and prevent workplace injuries and illnesses.', 'Protect the environment and comply with applicable laws and regulations.', 'Provide adequate resources, training and regular HSE reviews.', 'Promote participation, correct PPE use, hazard reporting and a proactive safety culture.'];

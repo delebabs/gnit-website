@@ -1,4 +1,6 @@
 import PageHero from '@/components/ui/PageHero'; import SectionHeader from '@/components/ui/SectionHeader'; import CapabilityGrid,{Capability} from '@/components/ui/CapabilityGrid';
+import { createPageMetadata } from '@/lib/seo';
+export const metadata = createPageMetadata({ title: 'Engineering Consultancy', description: 'GNIT provides engineering design, feasibility studies, project management, procurement, construction supervision and commissioning support.', path: '/services/engineering', keywords: ['engineering consultancy Nigeria', 'project management Nigeria', 'construction supervision', 'EPC consultancy'] });
 const items:Capability[]=[
   {title:'Feasibility Studies',description:'Technical and commercial assessments that establish an informed project path.',image:'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=95&w=1800',imageAlt:'Project team evaluating technical and commercial options'},
   {title:'Engineering Design',description:'Concept-to-detail design for safe, compliant and efficient infrastructure.',image:'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=95&w=1800',imageAlt:'Engineer preparing detailed drawings and design documentation'},
